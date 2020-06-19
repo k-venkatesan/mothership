@@ -100,6 +100,7 @@ public class Ship : MonoBehaviour
         }
     }
 
+    // Rotate ship based on input
     void RotateShip(float rotationInput)
     {
         // Determine the amount of rotation to be applied (with appropriate sign)
