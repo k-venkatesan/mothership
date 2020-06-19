@@ -21,6 +21,9 @@ public class Ship : MonoBehaviour
     const float ThrustForce = 5;
     Vector2 thrustDirection = new Vector2(1,0);
 
+    // Rotation speed
+    const float RotateDegreesPerSecond = 25;
+
     // Radius of circle collider
     float radius;
 
@@ -37,6 +40,17 @@ public class Ship : MonoBehaviour
 
         // Get radius of circle collider
         radius = GetComponent<CircleCollider2D>().radius;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        // Rotate ship if 'Rotate' button is pressed
+        float rotationInput = Input.GetAxis("Rotate");
+        if (rotationInput != 0)
+        {
+            RotateShip(rotationInput);
+        }
     }
 
     // FixedUpdate is called with the frequency of the physics system
@@ -84,6 +98,19 @@ public class Ship : MonoBehaviour
             position.y = ScreenUtils.ScreenTop + radius;
             transform.position = position;
         }
+    }
+
+    void RotateShip(float rotationInput)
+    {
+        // Determine the amount of rotation to be applied (with appropriate sign)
+        float rotationAmount = RotateDegreesPerSecond * Time.deltaTime;
+        if (rotationInput < 0)
+        {
+            rotationAmount *= -1;
+        }
+
+        // Apply rotation
+        transform.Rotate(new Vector3(0, 0, rotationAmount));
     }
 
     #endregion
