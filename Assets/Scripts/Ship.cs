@@ -52,6 +52,13 @@ public class Ship : MonoBehaviour
     // OnBecameInvisible is called when the game object is no longer visible by any camera
     void OnBecameInvisible()
     {
+        WrapAroundScreen();
+    }
+
+    // WrapAroundScreen makes ship leaving one side of the screen appear on the opposite side
+    void WrapAroundScreen()
+    {
+        // Position of ship
         Vector2 position = transform.position;
 
         // Horizontal wrapping
