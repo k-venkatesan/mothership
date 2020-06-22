@@ -54,6 +54,20 @@ public class Ship : MonoBehaviour
         }
     }
 
+    // RotateShip makes ship rotate based on input
+    void RotateShip(float rotationInput)
+    {
+        // Determine the amount of rotation to be applied (with appropriate sign)
+        float rotationAmount = RotateDegreesPerSecond * Time.deltaTime;
+        if (rotationInput < 0)
+        {
+            rotationAmount *= -1;
+        }
+
+        // Apply rotation
+        transform.Rotate(new Vector3(0, 0, rotationAmount));
+    }
+
     // FixedUpdate is called with the frequency of the physics system
     void FixedUpdate()
     {
@@ -62,6 +76,17 @@ public class Ship : MonoBehaviour
         {
             ApplyThrust();
         }
+    }
+
+    // ApplyThrust applies force in the direction that the ship is facing
+    void ApplyThrust()
+    {
+        // Align thrust direction to ship orientation
+        orientation = transform.eulerAngles[2] * Mathf.Deg2Rad;
+        thrustDirection = new Vector2(Mathf.Cos(orientation), Mathf.Sin(orientation));
+
+        // Apply thrust
+        rb2d.AddForce(ThrustForce * thrustDirection, ForceMode2D.Force);
     }
 
     // OnBecameInvisible is called when the game object is no longer visible by any camera
@@ -99,30 +124,6 @@ public class Ship : MonoBehaviour
             position.y = ScreenUtils.ScreenTop + radius;
             transform.position = position;
         }
-    }
-
-    // Rotate ship based on input
-    void RotateShip(float rotationInput)
-    {
-        // Determine the amount of rotation to be applied (with appropriate sign)
-        float rotationAmount = RotateDegreesPerSecond * Time.deltaTime;
-        if (rotationInput < 0)
-        {
-            rotationAmount *= -1;
-        }
-
-        // Apply rotation
-        transform.Rotate(new Vector3(0, 0, rotationAmount));
-    }
-
-    void ApplyThrust()
-    {
-        // Align thrust direction to ship orientation
-        orientation = transform.eulerAngles[2] * Mathf.Deg2Rad;
-        thrustDirection = new Vector2(Mathf.Cos(orientation), Mathf.Sin(orientation));
-
-        // Apply thrust
-        rb2d.AddForce(ThrustForce * thrustDirection, ForceMode2D.Force);
     }
 
     #endregion
