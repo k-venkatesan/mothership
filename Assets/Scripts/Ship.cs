@@ -18,11 +18,12 @@ public class Ship : MonoBehaviour
     #region Fields
 
     // Magnitude and direction of thrust
-    const float ThrustForce = 5;
-    Vector2 thrustDirection = new Vector2(1,0);
+    const float ThrustForce = 10;
+    float orientation;
+    Vector2 thrustDirection;
 
     // Rotation speed
-    const float RotateDegreesPerSecond = 25;
+    const float RotateDegreesPerSecond = 50;
 
     // Radius of circle collider
     float radius;
@@ -56,10 +57,10 @@ public class Ship : MonoBehaviour
     // FixedUpdate is called with the frequency of the physics system
     void FixedUpdate()
     {
-        // Applies thrust when 'Thrust' button is pressed
+        // Apply thrust if 'Thrust' button is pressed
         if (Input.GetAxis("Thrust") > 0)
         {
-            rb2d.AddForce(ThrustForce * thrustDirection, ForceMode2D.Force);
+            ApplyThrust();
         }
     }
 
@@ -112,6 +113,16 @@ public class Ship : MonoBehaviour
 
         // Apply rotation
         transform.Rotate(new Vector3(0, 0, rotationAmount));
+    }
+
+    void ApplyThrust()
+    {
+        // Align thrust direction to ship orientation
+        orientation = transform.eulerAngles[2] * Mathf.Deg2Rad;
+        thrustDirection = new Vector2(Mathf.Cos(orientation), Mathf.Sin(orientation));
+
+        // Apply thrust
+        rb2d.AddForce(ThrustForce * thrustDirection, ForceMode2D.Force);
     }
 
     #endregion
