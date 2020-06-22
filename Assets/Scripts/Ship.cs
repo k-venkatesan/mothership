@@ -23,7 +23,7 @@ public class Ship : MonoBehaviour
     Vector2 thrustDirection;
 
     // Rotation speed
-    const float RotateDegreesPerSecond = 50;
+    const float RotateDegreesPerSecond = 60;
 
     // Radius of circle collider
     float radius;
