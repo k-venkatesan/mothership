@@ -3,3 +3,6 @@ Temp
 obj/Debug/Assembly-CSharp.csprojAssemblyReference.cache
 Assembly-CSharp.csproj
 mothership.sln
+Build
+obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+.vs/mothership/v16/.suo
