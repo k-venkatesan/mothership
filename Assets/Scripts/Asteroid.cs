@@ -31,12 +31,18 @@ public class Asteroid : MonoBehaviour
     {
         // Apply sprite based on random number generated
         int choice = Random.Range(0, 3);
-        GetComponent<SpriteRenderer>().sprite = choice switch
+        switch (choice)
         {
-            0 => sprite1,
-            1 => sprite2,
-            _ => sprite3,
-        };
+            case 0:
+                GetComponent<SpriteRenderer>().sprite = sprite1;
+                break;
+            case 1:
+                GetComponent<SpriteRenderer>().sprite = sprite2;
+                break;
+            default:
+                GetComponent<SpriteRenderer>().sprite = sprite3;
+                break;
+        }
     }
 
     // AddRandomForce adds a force with random mangitude and direction
