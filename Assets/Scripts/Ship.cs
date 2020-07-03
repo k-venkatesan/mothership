@@ -5,17 +5,14 @@ using System.Collections.Specialized;
 using UnityEngine;
 
 /// <summary>
-/// Ship in game
+/// Ship controlled by player
 /// </summary>
 public class Ship : MonoBehaviour
 {
-    #region Components
-
-    Rigidbody2D rb2d;
-
-    #endregion
-
     #region Fields
+
+    // Components
+    Rigidbody2D rb2d;
 
     // Magnitude and direction of thrust
     const float ThrustForce = 10;
