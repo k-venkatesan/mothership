@@ -7,6 +7,14 @@ using UnityEngine;
 /// </summary>
 public class Asteroid : MonoBehaviour
 {
+    // Available sprites
+    [SerializeField]
+    Sprite sprite1;
+    [SerializeField]
+    Sprite sprite2;
+    [SerializeField]
+    Sprite sprite3;
+
     // Magnitude and direction of force
     float forceMagnitude;
     Vector2 forceDirection;
@@ -14,7 +22,27 @@ public class Asteroid : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        ApplyRandomSprite();
         AddRandomForce();
+    }
+
+    // ApplyRandomSprite applies a sprite randomly
+    void ApplyRandomSprite()
+    {
+        // Apply sprite based on random number generated
+        int choice = Random.Range(0, 3);
+        switch (choice)
+        {
+            case 0:
+                GetComponent<SpriteRenderer>().sprite = sprite1;
+                break;
+            case 1:
+                GetComponent<SpriteRenderer>().sprite = sprite2;
+                break;
+            default:
+                GetComponent<SpriteRenderer>().sprite = sprite3;
+                break;
+        }
     }
 
     // AddRandomForce adds a force with random mangitude and direction
