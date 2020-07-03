@@ -4,8 +4,14 @@ using UnityEngine;
 
 public class ScreenWrapper : MonoBehaviour
 {
+    #region Fields
+
     // Radius of circle collider
     float radius;
+
+    #endregion
+
+    #region Methods
 
     // Start is called before the first frame update
     void Start()
@@ -49,4 +55,6 @@ public class ScreenWrapper : MonoBehaviour
             transform.position = position;
         }
     }
+
+    #endregion
 }

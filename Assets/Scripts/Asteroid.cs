@@ -7,6 +7,8 @@ using UnityEngine;
 /// </summary>
 public class Asteroid : MonoBehaviour
 {
+    #region Fields
+
     // Available sprites
     [SerializeField]
     Sprite sprite1;
@@ -18,7 +20,11 @@ public class Asteroid : MonoBehaviour
     // Magnitude and direction of force
     float forceMagnitude;
     Vector2 forceDirection;
-    
+
+    #endregion
+
+    #region Methods
+
     // Start is called before the first frame update
     void Start()
     {
@@ -56,4 +62,6 @@ public class Asteroid : MonoBehaviour
         // Add force
         GetComponent<Rigidbody2D>().AddForce(forceMagnitude * forceDirection, ForceMode2D.Force);
     }
+
+    #endregion
 }
