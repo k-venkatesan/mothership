@@ -84,44 +84,7 @@ public class Ship : MonoBehaviour
 
         // Apply thrust
         rb2d.AddForce(ThrustForce * thrustDirection, ForceMode2D.Force);
-    }
-
-    // OnBecameInvisible is called when the game object is no longer visible by any camera
-    void OnBecameInvisible()
-    {
-        WrapAroundScreen();
-    }
-
-    // WrapAroundScreen makes ship leaving one side of the screen appear on the opposite side
-    void WrapAroundScreen()
-    {
-        // Position of ship
-        Vector2 position = transform.position;
-
-        // Horizontal wrapping
-        if (position.x > ScreenUtils.ScreenRight)
-        {
-            position.x = ScreenUtils.ScreenLeft - radius;
-            transform.position = position;
-        }
-        else if (position.x < ScreenUtils.ScreenLeft)
-        {
-            position.x = ScreenUtils.ScreenRight + radius;
-            transform.position = position;
-        }
-
-        // Vertical wrapping
-        if (position.y > ScreenUtils.ScreenTop)
-        {
-            position.y = ScreenUtils.ScreenBottom - radius;
-            transform.position = position;
-        }
-        else if (position.y < ScreenUtils.ScreenBottom)
-        {
-            position.y = ScreenUtils.ScreenTop + radius;
-            transform.position = position;
-        }
-    }
+    }    
 
     #endregion
 }
