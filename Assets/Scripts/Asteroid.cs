@@ -28,6 +28,9 @@ public class Asteroid : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Apply random rotation
+        transform.Rotate(new Vector3(0, 0, Random.Range(0, 360)));
+
         ApplyRandomSprite();
         AddRandomForce();
     }
