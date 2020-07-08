@@ -27,7 +27,7 @@ public class Ship : MonoBehaviour
 
     #endregion
 
-    #region Methods
+    #region MonoBehaviour Methods
 
     // Start is called before the first frame update
     void Start()
@@ -51,6 +51,41 @@ public class Ship : MonoBehaviour
         }
     }
 
+    // FixedUpdate is called with the frequency of the physics system
+    void FixedUpdate()
+    {
+        // Apply thrust if 'Thrust' button is pressed
+        if (Input.GetAxis("Thrust") > 0)
+        {
+            ApplyThrust();
+        }
+    }
+
+    // OnCollisionEnter2D is called when incoming collider makes contact
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        // Destroy ship if incoming collider belongs to an asteroid
+        if (collision.gameObject.GetComponent<Asteroid>() != null)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    #endregion
+
+    #region Private Methods
+
+    // ApplyThrust applies force in the direction that the ship is facing
+    void ApplyThrust()
+    {
+        // Align thrust direction to ship orientation
+        orientation = transform.eulerAngles[2] * Mathf.Deg2Rad;
+        thrustDirection = new Vector2(Mathf.Cos(orientation), Mathf.Sin(orientation));
+
+        // Apply thrust
+        rb2d.AddForce(ThrustForce * thrustDirection, ForceMode2D.Force);
+    }
+
     // RotateShip makes ship rotate based on input
     void RotateShip(float rotationInput)
     {
@@ -64,27 +99,6 @@ public class Ship : MonoBehaviour
         // Apply rotation
         transform.Rotate(new Vector3(0, 0, rotationAmount));
     }
-
-    // FixedUpdate is called with the frequency of the physics system
-    void FixedUpdate()
-    {
-        // Apply thrust if 'Thrust' button is pressed
-        if (Input.GetAxis("Thrust") > 0)
-        {
-            ApplyThrust();
-        }
-    }
-
-    // ApplyThrust applies force in the direction that the ship is facing
-    void ApplyThrust()
-    {
-        // Align thrust direction to ship orientation
-        orientation = transform.eulerAngles[2] * Mathf.Deg2Rad;
-        thrustDirection = new Vector2(Mathf.Cos(orientation), Mathf.Sin(orientation));
-
-        // Apply thrust
-        rb2d.AddForce(ThrustForce * thrustDirection, ForceMode2D.Force);
-    }    
 
     #endregion
 }
