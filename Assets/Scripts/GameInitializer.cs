@@ -7,12 +7,13 @@ using UnityEngine;
 /// </summary>
 public class GameInitializer : MonoBehaviour 
 {
-    /// <summary>
-    /// Awake is called before Start
-    /// </summary>
+    // Awake is called before Start
 	void Awake()
     {
-        // initialize screen utils
+        // Initialize screen utils
         ScreenUtils.Initialize();
+
+        // Initialize random number generator
+        RandomGenerator.Initialize();
     }
 }
