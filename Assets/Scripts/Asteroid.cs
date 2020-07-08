@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 /// <summary>
@@ -9,7 +10,7 @@ public class Asteroid : MonoBehaviour
 {
     #region Fields
 
-    // Available sprites
+    // Different asteroid sprites
     [SerializeField]
     Sprite sprite1;
     [SerializeField]
@@ -17,35 +18,33 @@ public class Asteroid : MonoBehaviour
     [SerializeField]
     Sprite sprite3;
 
-    // Magnitude and direction of force
-    float forceMagnitude;
-    Vector2 forceDirection;
-
     #endregion
 
-    #region Methods
+    #region MonoBehaviour Methods
 
     // Start is called before the first frame update
     void Start()
     {
-        // Apply random rotation
-        transform.Rotate(new Vector3(0, 0, Random.Range(0, 360)));
-
         ApplyRandomSprite();
-        AddRandomForce();
     }
 
-    // ApplyRandomSprite applies a sprite randomly
+    #endregion
+
+    #region Private Methods
+
+    /// <summary>
+    /// Applies random sprite to asteroid
+    /// </summary>
     void ApplyRandomSprite()
     {
         // Apply sprite based on random number generated
-        int choice = Random.Range(0, 3);
+        int choice = RandomGenerator.RandomNumberInRange(1, 3);
         switch (choice)
         {
-            case 0:
+            case 1:
                 GetComponent<SpriteRenderer>().sprite = sprite1;
                 break;
-            case 1:
+            case 2:
                 GetComponent<SpriteRenderer>().sprite = sprite2;
                 break;
             default:
@@ -54,15 +53,47 @@ public class Asteroid : MonoBehaviour
         }
     }
 
-    // AddRandomForce adds a force with random mangitude and direction
-    void AddRandomForce()
-    {
-        // Set random magnitude and direction for force
-        forceMagnitude = Random.Range(25, 75);
-        float angle = Random.Range(0, 360) * Mathf.Deg2Rad;
-        forceDirection = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+    #endregion
 
-        // Add force
+    #region Public Methods
+
+    /// <summary>
+    /// Initializes asteroid at given location and with motion in given (general) direction
+    /// </summary>
+    /// <param name="location">(x, y) location to initialize asteroid at</param>
+    /// <param name="direction">General direction of asteroid motion</param>
+    public void Initialize(Vector2 location, Direction direction)
+    {
+        // Apply given location along with random rotation
+        transform.position = location;
+        transform.Rotate(new Vector3(0, 0, RandomGenerator.RandomNumberInRange(0, 360)));
+
+        // Set random magnitude for force
+        float forceMagnitude = RandomGenerator.RandomNumberInRange(25, 75);
+
+        // Set angle of force within limited deviation from orthogonal direction
+        int maxDeviationInDegrees = 15;
+        float forceAngle;
+        switch (direction)
+        {
+            case Direction.Left:
+                forceAngle = RandomGenerator.RandomNumberInRange(180 - maxDeviationInDegrees, 180 + maxDeviationInDegrees) * Mathf.Deg2Rad;
+                break;
+            case Direction.Right:
+                forceAngle = RandomGenerator.RandomNumberInRange(0 - maxDeviationInDegrees, 0 + maxDeviationInDegrees) * Mathf.Deg2Rad;
+                break;
+            case Direction.Up:
+                forceAngle = RandomGenerator.RandomNumberInRange(90 - maxDeviationInDegrees, 90 + maxDeviationInDegrees) * Mathf.Deg2Rad;
+                break;
+            default:
+                forceAngle = RandomGenerator.RandomNumberInRange(270 - maxDeviationInDegrees, 270 + maxDeviationInDegrees) * Mathf.Deg2Rad;
+                break;
+        }
+
+        // Set direction for force based on angle
+        Vector2 forceDirection = new Vector2(Mathf.Cos(forceAngle), Mathf.Sin(forceAngle));
+
+        // Apply force
         GetComponent<Rigidbody2D>().AddForce(forceMagnitude * forceDirection, ForceMode2D.Force);
     }
 
