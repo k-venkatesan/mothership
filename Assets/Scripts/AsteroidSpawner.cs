@@ -65,6 +65,14 @@ public class AsteroidSpawner : MonoBehaviour
     }
 
     /// <summary>
+    /// Spawns asteroid just beyond bottom edge of screen with motion towards the left
+    /// </summary>
+    void SpawnBottomToTop()
+    {
+        Spawn(Direction.Down, Direction.Up);
+    }
+
+    /// <summary>
     /// Spawns asteroid just beyond left edge of screen with motion towards the right
     /// </summary>
     void SpawnLeftToRight()
@@ -86,15 +94,7 @@ public class AsteroidSpawner : MonoBehaviour
     void SpawnTopToBottom()
     {
         Spawn(Direction.Up, Direction.Down);
-    }
-
-    /// <summary>
-    /// Spawns asteroid just beyond bottom edge of screen with motion towards the left
-    /// </summary>
-    void SpawnBottomToTop()
-    {
-        Spawn(Direction.Down, Direction.Up);
-    }
+    }    
 
     #endregion
 }
