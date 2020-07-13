@@ -391,6 +391,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ship
       objectReference: {fileID: 0}
+    - target: {fileID: 2111491248256717022, guid: 2ec952a0ae0703e49838510784b83aa2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2ec952a0ae0703e49838510784b83aa2, type: 3}
 --- !u!1 &2111491248084590794 stripped
@@ -411,6 +416,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a073784d8186bf446b2e6f6f0a481926, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prefabBullet: {fileID: 1447333959464742634, guid: 14556b851bbb5f4429f91ca57b4d8c30,
+    type: 3}
 --- !u!50 &2111491248084590796
 Rigidbody2D:
   serializedVersion: 4

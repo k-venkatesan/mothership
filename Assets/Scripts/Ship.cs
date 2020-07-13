@@ -9,9 +9,17 @@ using UnityEngine;
 /// </summary>
 public class Ship : MonoBehaviour
 {
-    #region Fields
+    #region Public & Serialized Fields
 
-    // Components
+    // Prefabs
+    [SerializeField]
+    GameObject prefabBullet;
+
+    #endregion
+
+    #region Private Fields
+
+    // Components 
     Rigidbody2D rb2d;
 
     // Magnitude and direction of thrust
@@ -28,6 +36,12 @@ public class Ship : MonoBehaviour
     #endregion
 
     #region MonoBehaviour Methods
+
+    // Awake is called before Start
+    void Awake()
+    {
+        CheckSerializedFields();
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -48,6 +62,12 @@ public class Ship : MonoBehaviour
         if (rotationInput != 0)
         {
             RotateShip(rotationInput);
+        }
+
+        // Fire bullet to L-Ctrl is pressed
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+            Instantiate(prefabBullet, transform);
         }
     }
 
@@ -84,6 +104,17 @@ public class Ship : MonoBehaviour
 
         // Apply thrust
         rb2d.AddForce(ThrustForce * thrustDirection, ForceMode2D.Force);
+    }
+
+    /// <summary>
+    /// Checks if serialized fields have been filled in through drag-and-drop
+    /// </summary>
+    void CheckSerializedFields()
+    {
+        if (prefabBullet == null)
+        {
+            Debug.LogWarning("Prefab Bullet has not been filled-in. Please drag and drop into inspector window.");
+        }
     }
 
     // RotateShip makes ship rotate based on input
