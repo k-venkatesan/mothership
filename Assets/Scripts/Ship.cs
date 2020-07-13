@@ -65,9 +65,9 @@ public class Ship : MonoBehaviour
         }
 
         // Fire bullet to L-Ctrl is pressed
-        if (Input.GetKey(KeyCode.LeftControl))
+        if (Input.GetKeyDown(KeyCode.LeftControl))
         {
-            Instantiate(prefabBullet, transform);
+            Instantiate(prefabBullet, transform.position, transform.rotation);
         }
     }
 
