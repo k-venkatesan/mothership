@@ -1,17 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 //using System.Numerics;
 using UnityEngine;
+using UnityEngine.Timeline;
 
 /// <summary>
-/// Ship controlled by player
+/// The ship
 /// </summary>
 public class Ship : MonoBehaviour
 {
-    #region Public & Serialized Fields
+    #region Serialized Fields
 
-    // Prefabs
+    // Bullet fired by ship
     [SerializeField]
     GameObject prefabBullet;
 
@@ -22,16 +24,9 @@ public class Ship : MonoBehaviour
     // Components 
     Rigidbody2D rb2d;
 
-    // Magnitude and direction of thrust
+    // Rotation and translation constants
+    const float RotationDegreesPerSecond = 60;
     const float ThrustForce = 10;
-    float orientation;
-    Vector2 thrustDirection;
-
-    // Rotation speed
-    const float RotateDegreesPerSecond = 60;
-
-    // Radius of circle collider
-    float radius;
 
     #endregion
 
@@ -40,76 +35,42 @@ public class Ship : MonoBehaviour
     // Awake is called before Start
     void Awake()
     {
-        CheckSerializedFields();
+        CheckIfSerializedFieldsPopulated();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        // Add drag so that ship does not stop suddenly when thrust is removed
-        rb2d = GetComponent<Rigidbody2D>();
-        rb2d.drag = 2.5f;
-
-        // Get radius of circle collider
-        radius = GetComponent<CircleCollider2D>().radius;
+        InitializeRigidbody2D();
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Rotate ship if 'Rotate' button is pressed
-        float rotationInput = Input.GetAxis("Rotate");
-        if (rotationInput != 0)
-        {
-            RotateShip(rotationInput);
-        }
-
-        // Fire bullet to L-Ctrl is pressed
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            Instantiate(prefabBullet, transform.position, transform.rotation);
-        }
+        ProcessRotationInput();
+        ProcessFiringInput();
     }
 
     // FixedUpdate is called with the frequency of the physics system
     void FixedUpdate()
     {
-        // Apply thrust if 'Thrust' button is pressed
-        if (Input.GetAxis("Thrust") > 0)
-        {
-            ApplyThrust();
-        }
+        ProcessThrustInput();        
     }
 
-    // OnCollisionEnter2D is called when incoming collider makes contact
+    // OnCollisionEnter2D is called when an incoming collider makes contact
     void OnCollisionEnter2D(Collision2D collision)
     {
-        // Destroy ship if incoming collider belongs to an asteroid
-        if (collision.gameObject.GetComponent<Asteroid>() != null)
-        {
-            Destroy(gameObject);
-        }
+        DestroyIfAsteroid(collision);
     }
 
     #endregion
 
     #region Private Methods
 
-    // ApplyThrust applies force in the direction that the ship is facing
-    void ApplyThrust()
-    {
-        // Align thrust direction to ship orientation
-        orientation = transform.eulerAngles[2] * Mathf.Deg2Rad;
-        thrustDirection = new Vector2(Mathf.Cos(orientation), Mathf.Sin(orientation));
-
-        // Apply thrust
-        rb2d.AddForce(ThrustForce * thrustDirection, ForceMode2D.Force);
-    }
-
     /// <summary>
     /// Checks if serialized fields have been filled in through drag-and-drop
     /// </summary>
-    void CheckSerializedFields()
+    void CheckIfSerializedFieldsPopulated()
     {
         if (prefabBullet == null)
         {
@@ -117,18 +78,73 @@ public class Ship : MonoBehaviour
         }
     }
 
-    // RotateShip makes ship rotate based on input
-    void RotateShip(float rotationInput)
+    /// <summary>
+    /// Destroys ship if colliding object is an asteroid
+    /// </summary>
+    /// <param name="collision">Collision2D object containing information about collision</param>
+    void DestroyIfAsteroid(Collision2D collision)
     {
-        // Determine the amount of rotation to be applied (with appropriate sign)
-        float rotationAmount = RotateDegreesPerSecond * Time.deltaTime;
-        if (rotationInput < 0)
+        if (collision.gameObject.GetComponent<Asteroid>() != null)
         {
-            rotationAmount *= -1;
+            Destroy(gameObject);
         }
+    }
 
-        // Apply rotation
-        transform.Rotate(new Vector3(0, 0, rotationAmount));
+    /// <summary>
+    /// Initializes Rigidbody2D component
+    /// </summary>
+    void InitializeRigidbody2D()
+    {
+        // Get reference to Rigidbody2D component for efficient force application
+        rb2d = GetComponent<Rigidbody2D>();
+
+        // Add drag so that ship does not stop suddenly when thrust is removed
+        rb2d.drag = 2.5f;
+    }
+
+    /// <summary>
+    /// Processes input and fires bullet if L-Ctrl key is pressed
+    /// </summary>
+    void ProcessFiringInput()
+    {
+        // GetKeyDown instead of GetAxis ensures that key will have to be released and pressed again to fire another bullet
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            // Fire bullet from ship in direction it faces
+            Instantiate(prefabBullet, transform.position, transform.rotation);
+        }
+    }
+
+    /// <summary>
+    /// Processes input and rotates ship if 'Rotate' button is pressed
+    /// </summary>
+    void ProcessRotationInput()
+    {
+        // Get rotation input (in range [-1, 1])
+        float rotationInput = Input.GetAxis("Rotate");
+
+        // Rotate ship if non-zero rotation input is provided
+        if (rotationInput != 0)
+        {
+            float rotationAmountWithSign = RotationDegreesPerSecond * Time.deltaTime * Math.Sign(rotationInput);
+            transform.Rotate(new Vector3(0, 0, rotationAmountWithSign));
+        }        
+    }
+
+    /// <summary>
+    /// Processes input and applies thrust to ship if 'Thrust' button is pressed
+    /// </summary>
+    void ProcessThrustInput()
+    {
+        if (Input.GetAxis("Thrust") > 0)
+        {
+            // Align thrust direction to ship orientation
+            float shipOrientation = transform.eulerAngles[2] * Mathf.Deg2Rad;
+            Vector2 thrustDirection = new Vector2(Mathf.Cos(shipOrientation), Mathf.Sin(shipOrientation));
+
+            // Apply thrust
+            rb2d.AddForce(ThrustForce * thrustDirection, ForceMode2D.Force);
+        }
     }
 
     #endregion
