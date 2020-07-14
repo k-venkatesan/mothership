@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 public static class RandomGenerator
 {
-    #region Fields
+    #region Private Fields
 
     // Random number generator
     static System.Random random;
@@ -29,7 +29,7 @@ public static class RandomGenerator
     /// </summary>
     /// <param name="lowerBound">Lower bound of range (inclusive)</param>
     /// <param name="upperBound">Upper bound of range (inclusive)</param>
-    /// <returns></returns>
+    /// <returns>Integer in range [lowerBound, upperBound]</returns>
     public static int RandomNumberInRange(int lowerBound, int upperBound)
     {
         return random.Next(lowerBound, upperBound + 1);

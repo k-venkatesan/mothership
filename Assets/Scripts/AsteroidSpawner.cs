@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class AsteroidSpawner : MonoBehaviour
 {
-    #region Fields
+    #region Serialized Fields
 
+    // Asteroid to be spawned
     [SerializeField]
     Asteroid prefabAsteroid;
 
@@ -13,14 +14,19 @@ public class AsteroidSpawner : MonoBehaviour
 
     #region MonoBehaviour Methods
 
+    // Awake is called before Start
+    void Awake()
+    {
+        CheckIfSerializedFieldsPopulated();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        // Spawn asteroid on each screen edge with motion towards opposite edge
-        SpawnLeftToRight();
-        SpawnRightToLeft();
-        SpawnTopToBottom();
-        SpawnBottomToTop();
+        SpawnAsteroidLeftToRight();
+        SpawnAsteroidRightToLeft();
+        SpawnAsteroidTopToBottom();
+        SpawnAsteroidBottomToTop();
     }
 
     #endregion
@@ -28,11 +34,22 @@ public class AsteroidSpawner : MonoBehaviour
     #region Private Methods
 
     /// <summary>
+    /// Checks if serialized fields have been filled in through drag-and-drop
+    /// </summary>
+    void CheckIfSerializedFieldsPopulated()
+    {
+        if (prefabAsteroid == null)
+        {
+            Debug.LogWarning("Prefab Asteroid has not been filled-in. Please drag and drop into inspector window.");
+        }
+    }
+
+    /// <summary>
     /// Spawns asteroid at given screen edge and with given direction of motion
     /// </summary>
     /// <param name="directionOfSpawnLocationFromCentre">Direction that desired edge of screen lies in relation to centre</param>
     /// <param name="directionOfMotion">Direction of motion that asteroid is spawned with</param>
-    void Spawn(Direction directionOfSpawnLocationFromCentre, Direction directionOfMotion)
+    void SpawnAsteroid(Direction directionOfSpawnLocationFromCentre, Direction directionOfMotion)
     {
         // Instantiate asteroid
         Asteroid asteroid = Instantiate(prefabAsteroid);
@@ -54,9 +71,14 @@ public class AsteroidSpawner : MonoBehaviour
                 spawnLocation.x = 0;
                 spawnLocation.y = ScreenUtils.ScreenTop + asteroidRadius;
                 break;
-            default:
+            case Direction.Down:
                 spawnLocation.x = 0;
                 spawnLocation.y = ScreenUtils.ScreenBottom - asteroidRadius;
+                break;
+            default:
+                Debug.LogWarning("Unexpected behaviour in asteroid spawning");
+                spawnLocation.x = 0;
+                spawnLocation.y = 0;
                 break;
         }
 
@@ -65,35 +87,35 @@ public class AsteroidSpawner : MonoBehaviour
     }
 
     /// <summary>
-    /// Spawns asteroid just beyond bottom edge of screen with motion towards the left
+    /// Spawns asteroid just beyond bottom edge of screen with motion towards the top
     /// </summary>
-    void SpawnBottomToTop()
+    void SpawnAsteroidBottomToTop()
     {
-        Spawn(Direction.Down, Direction.Up);
+        SpawnAsteroid(Direction.Down, Direction.Up);
     }
 
     /// <summary>
     /// Spawns asteroid just beyond left edge of screen with motion towards the right
     /// </summary>
-    void SpawnLeftToRight()
+    void SpawnAsteroidLeftToRight()
     {
-        Spawn(Direction.Left, Direction.Right);
+        SpawnAsteroid(Direction.Left, Direction.Right);
     }
 
     /// <summary>
     /// Spawns asteroid just beyond right edge of screen with motion towards the left
     /// </summary>
-    void SpawnRightToLeft()
+    void SpawnAsteroidRightToLeft()
     {
-        Spawn(Direction.Right, Direction.Left);
+        SpawnAsteroid(Direction.Right, Direction.Left);
     }
 
     /// <summary>
     /// Spawns asteroid just beyond top edge of screen with motion towards the bottom
     /// </summary>
-    void SpawnTopToBottom()
+    void SpawnAsteroidTopToBottom()
     {
-        Spawn(Direction.Up, Direction.Down);
+        SpawnAsteroid(Direction.Up, Direction.Down);
     }    
 
     #endregion

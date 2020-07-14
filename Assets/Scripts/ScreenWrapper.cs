@@ -4,28 +4,42 @@ using UnityEngine;
 
 public class ScreenWrapper : MonoBehaviour
 {
-    #region Fields
+    #region Private Fields
 
     // Radius of circle collider
     float radius;
 
     #endregion
 
-    #region Methods
+    #region MonoBehaviour Methods
 
     // Start is called before the first frame update
     void Start()
     {
-        radius = GetComponent<CircleCollider2D>().radius;
+        GetColliderRadius();
     }
 
-    // OnBecameInvisible is called when the game object is no longer visible by any camera
+    // OnBecameInvisible is called when the game object is no longer visible
     void OnBecameInvisible()
     {
         WrapAroundScreen();
     }
 
-    // WrapAroundScreen makes game object leaving one side of the screen appear on the opposite side
+    #endregion
+
+    #region Private Methods
+
+    /// <summary>
+    /// Stores collider radius for efficient retrieving
+    /// </summary>
+    void GetColliderRadius()
+    {
+        radius = GetComponent<CircleCollider2D>().radius;
+    }
+
+    /// <summary>
+    /// Makes game object leaving one side of the screen appear on the opposite side
+    /// </summary>
     void WrapAroundScreen()
     {
         // Position of game object

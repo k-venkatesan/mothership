@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public class Asteroid : MonoBehaviour
 {
-    #region Fields
+    #region Serialized Fields
 
     // Different asteroid sprites
     [SerializeField]
@@ -21,6 +21,12 @@ public class Asteroid : MonoBehaviour
     #endregion
 
     #region MonoBehaviour Methods
+
+    // Awake is called before Start
+    void Awake()
+    {
+        CheckIfSerializedFieldsPopulated();
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -47,9 +53,23 @@ public class Asteroid : MonoBehaviour
             case 2:
                 GetComponent<SpriteRenderer>().sprite = sprite2;
                 break;
-            default:
+            case 3:
                 GetComponent<SpriteRenderer>().sprite = sprite3;
                 break;
+            default:
+                Debug.LogWarning("Unexpected behaviour in asteroid sprite application");
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Checks if serialized fields have been filled in through drag-and-drop
+    /// </summary>
+    void CheckIfSerializedFieldsPopulated()
+    {
+        if (sprite1 == null || sprite2 == null || sprite3 == null)
+        {
+            Debug.LogWarning("One or more prefab sprite fields not been filled-in. Please drag and drop into inspector window.");
         }
     }
 
@@ -85,8 +105,12 @@ public class Asteroid : MonoBehaviour
             case Direction.Up:
                 forceAngle = RandomGenerator.RandomNumberInRange(90 - maxDeviationInDegrees, 90 + maxDeviationInDegrees) * Mathf.Deg2Rad;
                 break;
-            default:
+            case Direction.Down:
                 forceAngle = RandomGenerator.RandomNumberInRange(270 - maxDeviationInDegrees, 270 + maxDeviationInDegrees) * Mathf.Deg2Rad;
+                break;
+            default:
+                Debug.LogWarning("Unexpected behaviour in asteroid initialization");
+                forceAngle = 0;
                 break;
         }
 

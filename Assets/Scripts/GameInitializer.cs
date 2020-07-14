@@ -10,10 +10,7 @@ public class GameInitializer : MonoBehaviour
     // Awake is called before Start
 	void Awake()
     {
-        // Initialize screen utils
         ScreenUtils.Initialize();
-
-        // Initialize random number generator
         RandomGenerator.Initialize();
     }
 }
