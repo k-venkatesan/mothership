@@ -26,9 +26,12 @@ public class Ship : MonoBehaviour
     // Components 
     Rigidbody2D rb2d;
 
-    // Rotation and translation constants
-    const float RotationDegreesPerSecond = 60;
+    // Magnitude and direction of forward thrust
     const float ThrustForce = 10;
+    Vector2 thrustDirection;
+
+    // Speed of rotation
+    const float RotationDegreesPerSecond = 60;
 
     #endregion
 
@@ -112,8 +115,11 @@ public class Ship : MonoBehaviour
         // GetKeyDown instead of GetAxis ensures that key will have to be released and pressed again to fire another bullet
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
-            // Fire bullet from ship in direction it faces
-            Instantiate(prefabBullet, transform.position, transform.rotation);
+            // Spawn bullet from ship in direction it faces
+            GameObject bullet = Instantiate(prefabBullet, transform.position, transform.rotation);
+
+            // Apply impulse force to bullet
+            bullet.GetComponent<Bullet>().ApplyForce(thrustDirection);
         }
     }
 
@@ -138,13 +144,15 @@ public class Ship : MonoBehaviour
     /// </summary>
     void ProcessThrustInput()
     {
+        // Align thrust direction to ship orientation
+        /* This is perfomed outside of the 'if' statement so that thrustDirection can be reused 
+           by ProcessFiringInput even when 'Thrust' button has not been pressed after rotation */
+        float shipOrientation = transform.eulerAngles[2] * Mathf.Deg2Rad;
+        thrustDirection = new Vector2(Mathf.Cos(shipOrientation), Mathf.Sin(shipOrientation));
+
+        // Apply thrust when button is pressed
         if (Input.GetAxis("Thrust") > 0)
         {
-            // Align thrust direction to ship orientation
-            float shipOrientation = transform.eulerAngles[2] * Mathf.Deg2Rad;
-            Vector2 thrustDirection = new Vector2(Mathf.Cos(shipOrientation), Mathf.Sin(shipOrientation));
-
-            // Apply thrust
             rb2d.AddForce(ThrustForce * thrustDirection, ForceMode2D.Force);
         }
     }
