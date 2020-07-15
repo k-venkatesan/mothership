@@ -34,6 +34,12 @@ public class Asteroid : MonoBehaviour
         ApplyRandomSprite();
     }
 
+    // OnCollisionEnter2D is called when an incoming collider makes contact
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        DestroyIfBullet(collision);
+    }
+
     #endregion
 
     #region Private Methods
@@ -70,6 +76,18 @@ public class Asteroid : MonoBehaviour
         if (sprite1 == null || sprite2 == null || sprite3 == null)
         {
             Debug.LogWarning("One or more prefab sprite fields not been filled-in. Please drag and drop into inspector window.");
+        }
+    }
+
+    /// <summary>
+    /// Destroys asteroid if colliding object is a bullet
+    /// </summary>
+    /// <param name="collision">Collision2D object containing information about collision</param>
+    void DestroyIfBullet(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Bullet")
+        {
+            Destroy(gameObject);
         }
     }
 
