@@ -86,7 +86,7 @@ public class Ship : MonoBehaviour
     /// <param name="collision">Collision2D object containing information about collision</param>
     void DestroyIfAsteroid(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Asteroid")
+        if (collision.gameObject.CompareTag("Asteroid"))
         {
             Destroy(gameObject);
         }

@@ -85,7 +85,7 @@ public class Asteroid : MonoBehaviour
     /// <param name="collision">Collision2D object containing information about collision</param>
     void DestroyIfBullet(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Bullet")
+        if (collision.gameObject.CompareTag("Bullet"))
         {
             Destroy(gameObject);
         }
