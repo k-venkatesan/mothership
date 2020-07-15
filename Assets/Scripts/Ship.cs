@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using TMPro;
+using UnityEditor.UIElements;
 //using System.Numerics;
 using UnityEngine;
 using UnityEngine.Timeline;
@@ -84,7 +86,7 @@ public class Ship : MonoBehaviour
     /// <param name="collision">Collision2D object containing information about collision</param>
     void DestroyIfAsteroid(Collision2D collision)
     {
-        if (collision.gameObject.GetComponent<Asteroid>() != null)
+        if (collision.gameObject.tag == "Asteroid")
         {
             Destroy(gameObject);
         }
