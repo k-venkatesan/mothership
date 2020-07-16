@@ -8,8 +8,9 @@ public class ScreenWrapper : MonoBehaviour
 {
     #region Fields
 
-    // Radius of circle collider
-    private float radius;
+    /* For game objects with box colliders - half-size is the half-width
+     * For game objects with circle colliders - half-size is the radius */
+    private float halfSize;
 
     #endregion // Fields
 
@@ -19,11 +20,24 @@ public class ScreenWrapper : MonoBehaviour
     #region Methods
 
     /// <summary>
-    /// Stores collider radius for efficient retrieving
+    /// Stores collider half-size for efficient retrieving
     /// </summary>
-    private void GetColliderRadius()
+    private void GetColliderHalfSize()
     {
-        radius = GetComponent<CircleCollider2D>().radius;
+        // Check collider type to determine half-size appropriately
+        if (GetComponent<CircleCollider2D>() != null)
+        {
+            halfSize = GetComponent<CircleCollider2D>().radius;
+        }
+        else if (GetComponent<BoxCollider2D>() != null)
+        {
+            halfSize = GetComponent<BoxCollider2D>().size[0] / 2;
+        }
+        else
+        {
+            Debug.LogWarning("No collider found on object. Screen wrap will not function as expected.");
+            halfSize = 0;
+        }        
     }
 
     /// <summary>
@@ -37,24 +51,24 @@ public class ScreenWrapper : MonoBehaviour
         // Horizontal wrapping
         if (position.x > ScreenUtils.ScreenRight)
         {
-            position.x = ScreenUtils.ScreenLeft - radius;
+            position.x = ScreenUtils.ScreenLeft - halfSize;
             transform.position = position;
         }
         else if (position.x < ScreenUtils.ScreenLeft)
         {
-            position.x = ScreenUtils.ScreenRight + radius;
+            position.x = ScreenUtils.ScreenRight + halfSize;
             transform.position = position;
         }
 
         // Vertical wrapping
         if (position.y > ScreenUtils.ScreenTop)
         {
-            position.y = ScreenUtils.ScreenBottom - radius;
+            position.y = ScreenUtils.ScreenBottom - halfSize;
             transform.position = position;
         }
         else if (position.y < ScreenUtils.ScreenBottom)
         {
-            position.y = ScreenUtils.ScreenTop + radius;
+            position.y = ScreenUtils.ScreenTop + halfSize;
             transform.position = position;
         }
     }
@@ -65,7 +79,7 @@ public class ScreenWrapper : MonoBehaviour
 
     private void Start()
     {
-        GetColliderRadius();
+        GetColliderHalfSize();
     }
 
     private void OnBecameInvisible()
