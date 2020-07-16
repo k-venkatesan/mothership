@@ -1,25 +1,23 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Provides screen utilities
 /// </summary>
 public static class ScreenUtils
 {
-    #region Private Fields
+    #region Fields
 
     // Screen dimensions saved to support resolution changes
-    static int screenWidth;
-    static int screenHeight;
+    private static int screenWidth;
+    private static int screenHeight;
 
     // Screen boundary coordinates cached for efficient boundary checking
-    static float screenLeft;
-    static float screenRight;
-    static float screenTop;
-    static float screenBottom;
+    private static float screenLeft;
+    private static float screenRight;
+    private static float screenTop;
+    private static float screenBottom;
 
-    #endregion
+    #endregion // Fields
 
     #region Properties
 
@@ -75,25 +73,20 @@ public static class ScreenUtils
         }
     }
 
-    #endregion
+    #endregion // Properties
 
-    #region Private Methods
+    #region Methods
 
     /// <summary>
     /// Checks for screen size change
     /// </summary>
-    static void CheckScreenSizeChanged()
+    private static void CheckScreenSizeChanged()
     {
-        if (screenWidth != Screen.width ||
-            screenHeight != Screen.height)
+        if (screenWidth != Screen.width || screenHeight != Screen.height)
         {
             Initialize();
         }
     }
-
-    #endregion
-
-    #region Public Methods
 
     /// <summary>
     /// Initializes the screen utilities
@@ -116,5 +109,5 @@ public static class ScreenUtils
         screenBottom = lowerLeftCornerWorld.y;
     }
 
-    #endregion
+    #endregion // Methods
 }

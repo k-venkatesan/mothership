@@ -1,20 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-/// <summary>
+﻿/// <summary>
 /// Provides global random number generator for one-time initialization
 /// </summary>
 public static class RandomGenerator
 {
-    #region Private Fields
+    #region Fields
 
     // Random number generator
-    static System.Random random;
+    private static System.Random random;
 
-    #endregion
+    #endregion // Fields
 
-    #region Public Methods
+    #region Properties
+    #endregion // Properties
+
+    #region Methods
 
     /// <summary>
     /// Initializes the random number generator
@@ -25,7 +24,7 @@ public static class RandomGenerator
     }
 
     /// <summary>
-    /// Returns random integer with given lower and upper bounds (both inclusive)
+    /// Returns random integer within given lower and upper bounds (both inclusive)
     /// </summary>
     /// <param name="lowerBound">Lower bound of range (inclusive)</param>
     /// <param name="upperBound">Upper bound of range (inclusive)</param>
@@ -35,5 +34,5 @@ public static class RandomGenerator
         return random.Next(lowerBound, upperBound + 1);
     }
 
-    #endregion
+    #endregion // Methods
 }

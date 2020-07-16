@@ -1,81 +1,38 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using TMPro;
-using UnityEditor.UIElements;
-//using System.Numerics;
 using UnityEngine;
-using UnityEngine.Timeline;
 
 /// <summary>
 /// The ship
 /// </summary>
 public class Ship : MonoBehaviour
 {
-    #region Serialized Fields
+    #region Fields
 
-    // Bullet fired by ship
+    // Bullet to be fired by ship
     [SerializeField]
-    GameObject prefabBullet;
-
-    #endregion
-
-    #region Private Fields
+    private GameObject prefabBullet;
 
     // Components 
-    Rigidbody2D rb2d;
+    private Rigidbody2D rb2d;
 
     // Magnitude and direction of forward thrust
-    const float ThrustForce = 10;
-    Vector2 thrustDirection;
+    private const float ThrustForce = 10;
+    private Vector2 thrustDirection;
 
     // Speed of rotation
-    const float RotationDegreesPerSecond = 60;
+    private const float RotationDegreesPerSecond = 60;
 
-    #endregion
+    #endregion // Fields
 
-    #region MonoBehaviour Methods
+    #region Properties
+    #endregion // Properties
 
-    // Awake is called before Start
-    void Awake()
-    {
-        CheckIfSerializedFieldsPopulated();
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        InitializeRigidbody2D();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        ProcessRotationInput();
-        ProcessFiringInput();
-    }
-
-    // FixedUpdate is called with the frequency of the physics system
-    void FixedUpdate()
-    {
-        ProcessThrustInput();        
-    }
-
-    // OnCollisionEnter2D is called when an incoming collider makes contact
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        DestroyIfAsteroid(collision);
-    }
-
-    #endregion
-
-    #region Private Methods
+    #region Methods
 
     /// <summary>
     /// Checks if serialized fields have been filled in through drag-and-drop
     /// </summary>
-    void CheckIfSerializedFieldsPopulated()
+    private void CheckIfSerializedFieldsPopulated()
     {
         if (prefabBullet == null)
         {
@@ -87,9 +44,11 @@ public class Ship : MonoBehaviour
     /// Destroys ship if colliding object is an asteroid
     /// </summary>
     /// <param name="collision">Collision2D object containing information about collision</param>
-    void DestroyIfAsteroid(Collision2D collision)
+    private void DestroyIfAsteroid(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Asteroid"))
+        /* Checking for existence of component is preferred over comparing
+         * tags since string comparisons are prone to errors */
+        if (collision.gameObject.GetComponent<Asteroid>() != null)
         {
             Destroy(gameObject);
         }
@@ -98,7 +57,7 @@ public class Ship : MonoBehaviour
     /// <summary>
     /// Initializes Rigidbody2D component
     /// </summary>
-    void InitializeRigidbody2D()
+    private void InitializeRigidbody2D()
     {
         // Get reference to Rigidbody2D component for efficient force application
         rb2d = GetComponent<Rigidbody2D>();
@@ -110,12 +69,15 @@ public class Ship : MonoBehaviour
     /// <summary>
     /// Processes input and fires bullet if L-Ctrl key is pressed
     /// </summary>
-    void ProcessFiringInput()
+    private void ProcessFiringInput()
     {
-        // GetKeyDown instead of GetAxis ensures that key will have to be released and pressed again to fire another bullet
+        /* GetKeyDown() is preferred over GetAxis() here since it returns true only in the first 
+         * frame that the key is pressed and needs the key to be released and pressed again to 
+         * return true once more - this as opposed to returning true for every frame that the key 
+         * is held down for */
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
-            // Spawn bullet from ship in direction it faces
+            // Spawn bullet facing same direction as ship
             GameObject bullet = Instantiate(prefabBullet, transform.position, transform.rotation);
 
             // Apply impulse force to bullet
@@ -126,27 +88,27 @@ public class Ship : MonoBehaviour
     /// <summary>
     /// Processes input and rotates ship if 'Rotate' button is pressed
     /// </summary>
-    void ProcessRotationInput()
+    private void ProcessRotationInput()
     {
         // Get rotation input (in range [-1, 1])
         float rotationInput = Input.GetAxis("Rotate");
 
-        // Rotate ship if non-zero rotation input is provided
+        // Rotate ship if non-zero (either positive or negative) rotation input is provided
         if (rotationInput != 0)
         {
             float rotationAmountWithSign = RotationDegreesPerSecond * Time.deltaTime * Math.Sign(rotationInput);
             transform.Rotate(new Vector3(0, 0, rotationAmountWithSign));
-        }        
+        }
     }
 
     /// <summary>
     /// Processes input and applies thrust to ship if 'Thrust' button is pressed
     /// </summary>
-    void ProcessThrustInput()
+    private void ProcessThrustInput()
     {
-        // Align thrust direction to ship orientation
-        /* This is perfomed outside of the 'if' statement so that thrustDirection can be reused 
-           by ProcessFiringInput even when 'Thrust' button has not been pressed after rotation */
+        /* Thrust direction is aligned to ship orientation outside of the 'if' statement so that 
+         * the thrustDirection variable is kept updated even when there is no thrust input - this 
+         * ensures that the correct direction is utilized by ProcessFiringInput() at all times */
         float shipOrientation = transform.eulerAngles[2] * Mathf.Deg2Rad;
         thrustDirection = new Vector2(Mathf.Cos(shipOrientation), Mathf.Sin(shipOrientation));
 
@@ -157,5 +119,35 @@ public class Ship : MonoBehaviour
         }
     }
 
-    #endregion
+    #endregion // Methods
+
+    #region MonoBehaviour Messages
+
+    private void Awake()
+    {
+        CheckIfSerializedFieldsPopulated();
+    }
+
+    private void Start()
+    {
+        InitializeRigidbody2D();
+    }
+
+    private void Update()
+    {
+        ProcessRotationInput();
+        ProcessFiringInput();
+    }
+
+    private void FixedUpdate()
+    {
+        ProcessThrustInput();
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        DestroyIfAsteroid(collision);
+    }
+
+    #endregion // MonoBehaviour Messages
 }

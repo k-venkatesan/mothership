@@ -1,53 +1,31 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Asteroid spawned in game
 /// </summary>
 public class Asteroid : MonoBehaviour
 {
-    #region Serialized Fields
+    #region Fields
 
     // Different asteroid sprites
     [SerializeField]
-    Sprite sprite1;
+    private Sprite sprite1;
     [SerializeField]
-    Sprite sprite2;
+    private Sprite sprite2;
     [SerializeField]
-    Sprite sprite3;
+    private Sprite sprite3;
 
-    #endregion
+    #endregion // Fields
 
-    #region MonoBehaviour Methods
+    #region Properties
+    #endregion // Properties
 
-    // Awake is called before Start
-    void Awake()
-    {
-        CheckIfSerializedFieldsPopulated();
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        ApplyRandomSprite();
-    }
-
-    // OnCollisionEnter2D is called when an incoming collider makes contact
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        DestroyIfBullet(collision);
-    }
-
-    #endregion
-
-    #region Private Methods
+    #region Methods
 
     /// <summary>
     /// Applies random sprite to asteroid
     /// </summary>
-    void ApplyRandomSprite()
+    private void ApplyRandomSprite()
     {
         // Apply sprite based on random number generated
         int choice = RandomGenerator.RandomNumberInRange(1, 3);
@@ -71,7 +49,7 @@ public class Asteroid : MonoBehaviour
     /// <summary>
     /// Checks if serialized fields have been filled in through drag-and-drop
     /// </summary>
-    void CheckIfSerializedFieldsPopulated()
+    private void CheckIfSerializedFieldsPopulated()
     {
         if (sprite1 == null || sprite2 == null || sprite3 == null)
         {
@@ -83,17 +61,15 @@ public class Asteroid : MonoBehaviour
     /// Destroys asteroid if colliding object is a bullet
     /// </summary>
     /// <param name="collision">Collision2D object containing information about collision</param>
-    void DestroyIfBullet(Collision2D collision)
+    private void DestroyIfBullet(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Bullet"))
+        /* Checking for existence of component is preferred over comparing
+         * tags since string comparisons are prone to errors */
+        if (collision.gameObject.GetComponent<Bullet>() != null)
         {
             Destroy(gameObject);
         }
     }
-
-    #endregion
-
-    #region Public Methods
 
     /// <summary>
     /// Initializes asteroid at given location and with motion in given (general) direction
@@ -110,21 +86,21 @@ public class Asteroid : MonoBehaviour
         float forceMagnitude = RandomGenerator.RandomNumberInRange(25, 75);
 
         // Set angle of force within limited deviation from orthogonal direction
-        int maxDeviationInDegrees = 15;
+        const int MaxDeviationInDegrees = 15;
         float forceAngle;
         switch (direction)
         {
             case Direction.Left:
-                forceAngle = RandomGenerator.RandomNumberInRange(180 - maxDeviationInDegrees, 180 + maxDeviationInDegrees) * Mathf.Deg2Rad;
+                forceAngle = RandomGenerator.RandomNumberInRange(180 - MaxDeviationInDegrees, 180 + MaxDeviationInDegrees) * Mathf.Deg2Rad;
                 break;
             case Direction.Right:
-                forceAngle = RandomGenerator.RandomNumberInRange(0 - maxDeviationInDegrees, 0 + maxDeviationInDegrees) * Mathf.Deg2Rad;
+                forceAngle = RandomGenerator.RandomNumberInRange(0 - MaxDeviationInDegrees, 0 + MaxDeviationInDegrees) * Mathf.Deg2Rad;
                 break;
             case Direction.Up:
-                forceAngle = RandomGenerator.RandomNumberInRange(90 - maxDeviationInDegrees, 90 + maxDeviationInDegrees) * Mathf.Deg2Rad;
+                forceAngle = RandomGenerator.RandomNumberInRange(90 - MaxDeviationInDegrees, 90 + MaxDeviationInDegrees) * Mathf.Deg2Rad;
                 break;
             case Direction.Down:
-                forceAngle = RandomGenerator.RandomNumberInRange(270 - maxDeviationInDegrees, 270 + maxDeviationInDegrees) * Mathf.Deg2Rad;
+                forceAngle = RandomGenerator.RandomNumberInRange(270 - MaxDeviationInDegrees, 270 + MaxDeviationInDegrees) * Mathf.Deg2Rad;
                 break;
             default:
                 Debug.LogWarning("Unexpected behaviour in asteroid initialization");
@@ -139,5 +115,25 @@ public class Asteroid : MonoBehaviour
         GetComponent<Rigidbody2D>().AddForce(forceMagnitude * forceDirection, ForceMode2D.Force);
     }
 
-    #endregion
+    #endregion // Methods
+
+    #region MonoBehaviour Messages
+
+    private void Awake()
+    {
+        CheckIfSerializedFieldsPopulated();
+    }
+
+    private void Start()
+    {
+        ApplyRandomSprite();
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        DestroyIfBullet(collision);
+    }
+
+    #endregion // MonoBehaviour Messages
+
 }

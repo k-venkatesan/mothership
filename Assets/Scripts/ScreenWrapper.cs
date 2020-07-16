@@ -1,38 +1,27 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+/// <summary>
+/// Screen wrapping is enabled for game objects that this script is attached to
+/// (Screen wrapping makes an object leaving one side of the screen return from the other side)
+/// </summary>
 public class ScreenWrapper : MonoBehaviour
 {
-    #region Private Fields
+    #region Fields
 
     // Radius of circle collider
-    float radius;
+    private float radius;
 
-    #endregion
+    #endregion // Fields
 
-    #region MonoBehaviour Methods
+    #region Properties
+    #endregion // Properties
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        GetColliderRadius();
-    }
-
-    // OnBecameInvisible is called when the game object is no longer visible
-    void OnBecameInvisible()
-    {
-        WrapAroundScreen();
-    }
-
-    #endregion
-
-    #region Private Methods
+    #region Methods
 
     /// <summary>
     /// Stores collider radius for efficient retrieving
     /// </summary>
-    void GetColliderRadius()
+    private void GetColliderRadius()
     {
         radius = GetComponent<CircleCollider2D>().radius;
     }
@@ -40,7 +29,7 @@ public class ScreenWrapper : MonoBehaviour
     /// <summary>
     /// Makes game object leaving one side of the screen appear on the opposite side
     /// </summary>
-    void WrapAroundScreen()
+    private void WrapAroundScreen()
     {
         // Position of game object
         Vector2 position = transform.position;
@@ -70,5 +59,19 @@ public class ScreenWrapper : MonoBehaviour
         }
     }
 
-    #endregion
+    #endregion // Methods
+
+    #region MonoBehaviour Messages
+
+    private void Start()
+    {
+        GetColliderRadius();
+    }
+
+    private void OnBecameInvisible()
+    {
+        WrapAroundScreen();
+    }
+
+    #endregion // MonoBehaviour Messages
 }

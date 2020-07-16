@@ -1,16 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Initializes the game
 /// </summary>
 public class GameInitializer : MonoBehaviour 
 {
-    // Awake is called before Start
-	void Awake()
+    #region Fields
+    #endregion //Fields
+
+    #region Properties
+    #endregion // Properties
+
+    #region Methods
+    #endregion // Methods
+
+    #region MonoBehaviour Messages
+
+    private void Awake()
     {
         ScreenUtils.Initialize();
         RandomGenerator.Initialize();
     }
+
+    #endregion // MonoBehaviour Messages
 }
