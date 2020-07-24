@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// Asteroid spawned in game
@@ -18,6 +20,15 @@ public class Asteroid : MonoBehaviour
     #endregion // Fields
 
     #region Properties
+
+    /// <summary>
+    /// Is the asteroid large in size or not?
+    /// </summary>
+    private bool isLargeInSize
+    {
+        get { return transform.localScale[0] > 0.25; }
+    }
+
     #endregion // Properties
 
     #region Methods
@@ -58,17 +69,15 @@ public class Asteroid : MonoBehaviour
     }
 
     /// <summary>
-    /// Destroys asteroid if colliding object is a bullet
+    /// Checks if collider attached to given Collision2D object belong to a bullet
     /// </summary>
-    /// <param name="collision">Collision2D object containing information about collision</param>
-    private void DestroyIfBullet(Collision2D collision)
+    /// <param name="collision"></param>
+    /// <returns>'True' if collider belongs to bullet; 'False' if not</returns>
+    private bool CollisionIsWithBullet(Collision2D collision)
     {
         /* Checking for existence of component is preferred over comparing
          * tags since string comparisons are prone to errors */
-        if (collision.gameObject.GetComponent<Bullet>() != null)
-        {
-            Destroy(gameObject);
-        }
+        return collision.gameObject.GetComponent<Bullet>() != null;
     }
 
     /// <summary>
@@ -76,7 +85,8 @@ public class Asteroid : MonoBehaviour
     /// </summary>
     /// <param name="location">(x, y) location to initialize asteroid at</param>
     /// <param name="direction">General direction of asteroid motion</param>
-    public void Initialize(Vector2 location, Direction direction)
+    /// <param name="maxDeviationFromDirectionInDegrees">Maximum allowed deviation from given orthogonal direction (in degrees)</param>
+    private void Initialize(Vector2 location, Direction direction, int maxDeviationFromDirectionInDegrees)
     {
         // Apply given location along with random rotation
         transform.position = location;
@@ -86,21 +96,20 @@ public class Asteroid : MonoBehaviour
         float forceMagnitude = RandomGenerator.RandomNumberInRange(25, 75);
 
         // Set angle of force within limited deviation from orthogonal direction
-        const int MaxDeviationInDegrees = 15;
         float forceAngle;
         switch (direction)
         {
             case Direction.Left:
-                forceAngle = RandomGenerator.RandomNumberInRange(180 - MaxDeviationInDegrees, 180 + MaxDeviationInDegrees) * Mathf.Deg2Rad;
+                forceAngle = RandomGenerator.RandomNumberInRange(180 - maxDeviationFromDirectionInDegrees, 180 + maxDeviationFromDirectionInDegrees) * Mathf.Deg2Rad;
                 break;
             case Direction.Right:
-                forceAngle = RandomGenerator.RandomNumberInRange(0 - MaxDeviationInDegrees, 0 + MaxDeviationInDegrees) * Mathf.Deg2Rad;
+                forceAngle = RandomGenerator.RandomNumberInRange(0 - maxDeviationFromDirectionInDegrees, 0 + maxDeviationFromDirectionInDegrees) * Mathf.Deg2Rad;
                 break;
             case Direction.Up:
-                forceAngle = RandomGenerator.RandomNumberInRange(90 - MaxDeviationInDegrees, 90 + MaxDeviationInDegrees) * Mathf.Deg2Rad;
+                forceAngle = RandomGenerator.RandomNumberInRange(90 - maxDeviationFromDirectionInDegrees, 90 + maxDeviationFromDirectionInDegrees) * Mathf.Deg2Rad;
                 break;
             case Direction.Down:
-                forceAngle = RandomGenerator.RandomNumberInRange(270 - MaxDeviationInDegrees, 270 + MaxDeviationInDegrees) * Mathf.Deg2Rad;
+                forceAngle = RandomGenerator.RandomNumberInRange(270 - maxDeviationFromDirectionInDegrees, 270 + maxDeviationFromDirectionInDegrees) * Mathf.Deg2Rad;
                 break;
             default:
                 Debug.LogWarning("Unexpected behaviour in asteroid initialization");
@@ -113,6 +122,47 @@ public class Asteroid : MonoBehaviour
 
         // Apply force
         GetComponent<Rigidbody2D>().AddForce(forceMagnitude * forceDirection, ForceMode2D.Force);
+    }
+
+    /// <summary>
+    /// Initializes asteroid at given location and with motion in given (general) direction
+    /// </summary>
+    /// <param name="location">(x, y) location to initialize asteroid at</param>
+    /// <param name="direction">General direction of asteroid motion</param>
+    public void Initialize(Vector2 location, Direction direction)
+    {
+        // Set limits of deviation from orthogonal direction and initialize asteroid
+        const int MaxDeviationFromDirectionInDegrees = 15;
+        Initialize(location, direction, MaxDeviationFromDirectionInDegrees);
+    }
+
+    /// <summary>
+    /// Initializes asteroid at given location and with motion in random direction
+    /// </summary>
+    /// <param name="location">(x, y) location to initialize asteroid at</param>
+    private void Initialize(Vector2 location)
+    {
+        /* Deviation of +/- 180 degrees from 'Up' means that all
+         * directions in space are possible - this will hold true even if
+         * 'Up' is replaced by 'Left', 'Right' or 'Down' */
+        Initialize(location, Direction.Up, 180);
+    }
+
+    /// <summary>
+    /// Splits asteroid into two pieces with separate directions of motion
+    /// </summary>
+    private void SplitIntoTwo()
+    {
+        // Make size of asteroid and collider half of original
+        transform.localScale /= 2;
+        GetComponent<CircleCollider2D>().radius /= 2;
+
+        // Spawn two instances of halved asteroid and initialize to provide random velocities
+        Instantiate(gameObject).GetComponent<Asteroid>().Initialize(transform.position);
+        Instantiate(gameObject).GetComponent<Asteroid>().Initialize(transform.position);
+
+        // Destroy original so that only the two new instances remain
+        Destroy(gameObject);
     }
 
     #endregion // Methods
@@ -131,7 +181,19 @@ public class Asteroid : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        DestroyIfBullet(collision);
+        // Check if collision is with bullet before splitting or destroying asteroid
+        if (CollisionIsWithBullet(collision))
+        {
+            // Split asteroid if large in size; Destroy if small
+            if (isLargeInSize)
+            {
+                SplitIntoTwo();
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
     }
 
     #endregion // MonoBehaviour Messages
