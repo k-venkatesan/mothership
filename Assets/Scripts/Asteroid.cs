@@ -24,7 +24,7 @@ public class Asteroid : MonoBehaviour
     /// <summary>
     /// Is the asteroid large in size or not?
     /// </summary>
-    private bool isLargeInSize
+    private bool LargeInSize
     {
         get { return transform.localScale[0] > 0.25; }
     }
@@ -66,18 +66,6 @@ public class Asteroid : MonoBehaviour
         {
             Debug.LogWarning("One or more prefab sprite fields not been filled-in. Please drag and drop into inspector window.");
         }
-    }
-
-    /// <summary>
-    /// Checks if collider attached to given Collision2D object belong to a bullet
-    /// </summary>
-    /// <param name="collision"></param>
-    /// <returns>'True' if collider belongs to bullet; 'False' if not</returns>
-    private bool CollisionIsWithBullet(Collision2D collision)
-    {
-        /* Checking for existence of component is preferred over comparing
-         * tags since string comparisons are prone to errors */
-        return collision.gameObject.GetComponent<Bullet>() != null;
     }
 
     /// <summary>
@@ -149,6 +137,29 @@ public class Asteroid : MonoBehaviour
     }
 
     /// <summary>
+    /// Checks if collision of asteroid is with a bullet and splits it if 
+    /// it is large and destroys it if it is small
+    /// </summary>
+    /// <param name="collision">Collision2D object containing information about collision</param>
+    private void ProcessCollisionIfBullet(Collision2D collision)
+    {
+        /* Checking for existence of component is preferred over comparing
+         * tags since string comparisons are prone to errors */
+        if (collision.gameObject.GetComponent<Bullet>() != null)
+        {
+            // Split asteroid if large in size; Destroy if small
+            if (LargeInSize)
+            {
+                SplitIntoTwo();
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+    }
+
+    /// <summary>
     /// Splits asteroid into two pieces with separate directions of motion
     /// </summary>
     private void SplitIntoTwo()
@@ -181,21 +192,8 @@ public class Asteroid : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // Check if collision is with bullet before splitting or destroying asteroid
-        if (CollisionIsWithBullet(collision))
-        {
-            // Split asteroid if large in size; Destroy if small
-            if (isLargeInSize)
-            {
-                SplitIntoTwo();
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
+        ProcessCollisionIfBullet(collision);
     }
 
     #endregion // MonoBehaviour Messages
-
 }
