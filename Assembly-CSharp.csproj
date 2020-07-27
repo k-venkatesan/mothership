@@ -68,6 +68,7 @@
     <Compile Include="Assets\Scripts\Bullet.cs" />
     <Compile Include="Assets\Scripts\Direction.cs" />
     <Compile Include="Assets\Scripts\GameInitializer.cs" />
+    <Compile Include="Assets\Scripts\HUD.cs" />
     <Compile Include="Assets\Scripts\RandomGenerator.cs" />
     <Compile Include="Assets\Scripts\ScreenUtils.cs" />
     <Compile Include="Assets\Scripts\ScreenWrapper.cs" />

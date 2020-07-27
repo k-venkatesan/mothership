@@ -41,15 +41,19 @@ public class Ship : MonoBehaviour
     }
 
     /// <summary>
-    /// Destroys ship if colliding object is an asteroid
+    /// Ends game by stopping HUD timer and destroying ship if colliding object is an asteroid
     /// </summary>
     /// <param name="collision">Collision2D object containing information about collision</param>
-    private void DestroyIfAsteroid(Collision2D collision)
+    private void EndGameIfAsteroid(Collision2D collision)
     {
         /* Checking for existence of component is preferred over comparing
          * tags since string comparisons are prone to errors */
         if (collision.gameObject.GetComponent<Asteroid>() != null)
         {
+            /* Stop HUD timer - searching for tag is necessary here */
+            GameObject.FindWithTag("HUD").GetComponent<HUD>().StopTimer();
+
+            // Destroy ship
             Destroy(gameObject);
         }
     }
@@ -146,7 +150,7 @@ public class Ship : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        DestroyIfAsteroid(collision);
+        EndGameIfAsteroid(collision);
     }
 
     #endregion // MonoBehaviour Messages
