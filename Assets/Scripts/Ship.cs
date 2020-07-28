@@ -53,6 +53,9 @@ public class Ship : MonoBehaviour
             /* Stop HUD timer - searching for tag is necessary here */
             GameObject.FindWithTag("HUD").GetComponent<HUD>().StopTimer();
 
+            // Play audio clip of player death
+            AudioManager.Play(AudioClipName.PlayerDeath);
+
             // Destroy ship
             Destroy(gameObject);
         }
@@ -86,6 +89,9 @@ public class Ship : MonoBehaviour
 
             // Apply impulse force to bullet
             bullet.GetComponent<Bullet>().ApplyForce(thrustDirection);
+
+            // Play audio clip of shot being fired
+            AudioManager.Play(AudioClipName.PlayerShot);
         }
     }
 

@@ -147,6 +147,9 @@ public class Asteroid : MonoBehaviour
          * tags since string comparisons are prone to errors */
         if (collision.gameObject.GetComponent<Bullet>() != null)
         {
+            // Play audio clip of asteroid being hit
+            AudioManager.Play(AudioClipName.AsteroidHit);
+
             // Split asteroid if large in size; Destroy if small
             if (LargeInSize)
             {
