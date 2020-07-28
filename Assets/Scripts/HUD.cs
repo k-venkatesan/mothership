@@ -17,8 +17,9 @@ public class HUD : MonoBehaviour
     // Prefixes to integer score and time displays
     const string scoreTextPrefix = "Score: ";
     const string timeTextPrefix = "Time: ";
-    
-    // Elapsed time in seconds
+
+    // Score and elapsed time
+    int score = 0;
     float elapsedSeconds = 0;
 
     // Flag to check if the timer is to be kept running or not
@@ -50,12 +51,21 @@ public class HUD : MonoBehaviour
     }
 
     /// <summary>
+    /// Increase score by given amount
+    /// </summary>
+    /// <param name="increaseAmount">Number of points to increase score by</param>
+    public void IncreaseScore(int increaseAmount)
+    {
+        score += increaseAmount;
+    }
+
+    /// <summary>
     /// Set up score and time displays
     /// </summary>
     private void InitializeDisplays()
     {
         // Initialize score display
-        scoreText.text = scoreTextPrefix + "0";
+        scoreText.text = scoreTextPrefix + score.ToString();
 
         // Initialize time display with integral part of seconds elapsed
         timeText.text = timeTextPrefix + ((int)elapsedSeconds).ToString();
@@ -84,6 +94,14 @@ public class HUD : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Updates score displayed in HUD
+    /// </summary>
+    private void UpdateScoreDisplay()
+    {
+        scoreText.text = scoreTextPrefix + score.ToString();
+    }
+
     #endregion // Methods
 
     #region MonoBehaviour Messages
@@ -101,6 +119,7 @@ public class HUD : MonoBehaviour
     void Update()
     {
         UpdateRunningTimer();
+        UpdateScoreDisplay();
     }
 
     #endregion // MonoBehaviour Messages

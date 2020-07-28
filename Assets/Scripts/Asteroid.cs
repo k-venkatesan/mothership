@@ -153,10 +153,14 @@ public class Asteroid : MonoBehaviour
             // Split asteroid if large in size; Destroy if small
             if (LargeInSize)
             {
+                // Increase player score by 1 and split asteroid
+                GameObject.FindWithTag("HUD").GetComponent<HUD>().IncreaseScore(1);
                 SplitIntoTwo();
             }
             else
             {
+                // Increase player score by 2 and destroy asteroid
+                GameObject.FindWithTag("HUD").GetComponent<HUD>().IncreaseScore(2);
                 Destroy(gameObject);
             }
         }
