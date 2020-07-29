@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Manages the spawning of asteroids
+/// </summary>
 public class AsteroidSpawner : MonoBehaviour
 {
     #region Fields

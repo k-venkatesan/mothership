@@ -2,7 +2,7 @@
 using UnityEngine;
 
 /// <summary>
-/// The ship
+/// The ship controlled by the player
 /// </summary>
 public class Ship : MonoBehaviour
 {
